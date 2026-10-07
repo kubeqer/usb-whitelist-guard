@@ -1,0 +1,21 @@
+[project]
+name = "usb-whitelist-guard-monitor"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.15"
+dependencies = [
+    "pyudev>=0.24.5 ; sys_platform == 'linux'",
+    "usb-whitelist-guard-core",
+    "wmi>=1.5.1 ; sys_platform == 'win32'",
+]
+
+[project.scripts]
+usb-whitelist-guard-monitor = "usb_whitelist_guard_monitor:main"
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+usb-whitelist-guard-core = { workspace = true }
