@@ -52,6 +52,7 @@ class EntryDialog(tk.Toplevel):
         self.bind("<Return>", lambda _event: self._submit())
         self.bind("<Escape>", lambda _event: self.destroy())
         style_window(self)
+        self.wait_visibility()
         self.grab_set()
 
     def _submit(self) -> None:

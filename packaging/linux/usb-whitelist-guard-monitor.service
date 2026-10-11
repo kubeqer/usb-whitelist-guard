@@ -1,0 +1,15 @@
+[Unit]
+Description=USB Whitelist Guard monitor
+After=systemd-udevd.service
+
+[Service]
+Type=simple
+ExecStart=/opt/usb-whitelist-guard/venv/bin/usb-whitelist-guard-monitor
+Restart=on-failure
+RestartSec=2
+UMask=0007
+NoNewPrivileges=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

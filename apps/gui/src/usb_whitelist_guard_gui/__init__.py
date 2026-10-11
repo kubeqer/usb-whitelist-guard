@@ -14,6 +14,7 @@ from usb_whitelist_guard_core.storage import (
     upgrade_schema,
 )
 
+from usb_whitelist_guard_gui.app_icon import APP_ID, prepare_process, set_app_icon
 from usb_whitelist_guard_gui.main_window import MainWindow
 from usb_whitelist_guard_gui.theme import THEMES, apply_theme
 
@@ -24,7 +25,9 @@ def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     logging.basicConfig(level=logging.INFO)
 
-    root = tk.Tk()
+    prepare_process()
+    root = tk.Tk(className=APP_ID)
+    set_app_icon(root)
     try:
         service = _open_service(args.database)
     except Exception as exc:

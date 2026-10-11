@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=USB Whitelist Guard
+Comment=Manage the USB device allowlist and review blocked devices
+Exec=usb-whitelist-guard-gui
+Icon=usb-whitelist-guard
+Terminal=false
+Categories=System;Security;
+StartupWMClass=Usb-whitelist-guard

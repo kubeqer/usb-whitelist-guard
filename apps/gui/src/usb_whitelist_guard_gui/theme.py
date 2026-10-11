@@ -26,7 +26,6 @@ _TK_FONTS = (
     "TkCaptionFont",
     "TkTooltipFont",
 )
-# sv-ttk hardcodes Segoe UI Variable, which only exists on Windows 11.
 _SV_FONTS = {
     "SunValleyCaptionFont": "normal",
     "SunValleyBodyFont": "normal",
@@ -42,11 +41,8 @@ _DWMWA_USE_IMMERSIVE_DARK_MODE = 20
 
 
 def apply_theme(root: tk.Tk, theme: str = "system") -> str:
-    """Apply the Sun Valley theme and return the resolved mode ("light"/"dark")."""
     mode = _resolve(theme)
     sv_ttk.set_theme(mode, root)
-    # sv-ttk applies its colors from a <<ThemeChanged>> binding that Tk 9 no
-    # longer delivers to the root class, which leaves frames and headings unstyled.
     root.tk.call("configure_colors")
     if sys.platform == "win32":
         _windows_fonts(root)
@@ -61,7 +57,6 @@ def error_color(root: tk.Misc) -> str:
 
 
 def style_window(window: tk.Tk | tk.Toplevel) -> None:
-    """Match the native title bar to the theme (Windows only)."""
     if sys.platform != "win32":
         return
     dark = ctypes.c_int(sv_ttk.get_theme(_root_of(window)) == "dark")
@@ -90,7 +85,6 @@ def _resolve(theme: str) -> str:
 
 
 def _windows_fonts(root: tk.Tk) -> None:
-    # Windows 10 has Segoe UI but not its Variable successor.
     if "Segoe UI Variable Text" not in font.families(root):
         _replace_fonts(root, "Segoe UI")
 

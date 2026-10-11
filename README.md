@@ -132,7 +132,7 @@ Platform dependencies are installed automatically: `wmi` (and `pywin32`) on Wind
 
 ## Usage
 
-Both apps need **administrator / root** privileges. The monitor writes to the device stack, and both apps write to the shared database, which by default lives in a system location.
+When run from the repository, both apps need **administrator / root** privileges. The monitor writes to the device stack, and both apps write to the shared database, which by default lives in a system location.
 
 ```bash
 uv run usb-whitelist-guard-monitor
@@ -140,6 +140,28 @@ uv run usb-whitelist-guard-gui
 ```
 
 The GUI follows the system light/dark setting. Pass `--theme light` or `--theme dark` to override it. Under `sudo` the system setting is root's, not yours.
+
+### Installing on Linux
+
+For everyday use, install the apps system-wide instead of running them from the repository. This needs systemd and uv.
+
+```bash
+sudo packaging/linux/install.sh
+```
+
+The installer:
+
+- installs both apps with their own Python 3.15 into `/opt/usb-whitelist-guard`, and links the commands into `/usr/local/bin`;
+- runs the monitor as the `usb-whitelist-guard-monitor` systemd service, which starts at boot and restarts on failure;
+- creates the `usb-whitelist-guard` group, gives it write access to `/var/lib/usb-whitelist-guard`, and adds the user who ran `sudo` to it. Members run the GUI **without sudo** (log out and back in first). Only add users you trust to approve devices;
+- adds "USB Whitelist Guard" with its icon to the application menu.
+
+Run it again to upgrade. To remove the apps:
+
+```bash
+sudo packaging/linux/uninstall.sh          # keeps the database and the group
+sudo packaging/linux/uninstall.sh --purge  # deletes them as well
+```
 
 ## Requirements
 
