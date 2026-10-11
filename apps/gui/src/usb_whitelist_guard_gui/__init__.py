@@ -15,6 +15,7 @@ from usb_whitelist_guard_core.storage import (
 )
 
 from usb_whitelist_guard_gui.main_window import MainWindow
+from usb_whitelist_guard_gui.theme import THEMES, apply_theme
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +38,8 @@ def main(argv: list[str] | None = None) -> int:
         root.destroy()
         return 1
 
-    MainWindow(root, service, args.database)
+    apply_theme(root, args.theme)
+    MainWindow(root, service)
     root.mainloop()
     return 0
 
@@ -54,4 +56,5 @@ def _open_service(database: Path) -> AllowlistService:
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(prog="usb-whitelist-guard-gui")
     parser.add_argument("--database", type=Path, default=default_database_path())
+    parser.add_argument("--theme", choices=THEMES, default="system")
     return parser.parse_args(argv)

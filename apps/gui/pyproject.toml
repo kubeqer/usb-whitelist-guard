@@ -5,6 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.15"
 dependencies = [
+    "darkdetect>=0.8",
+    "sv-ttk>=2.6",
     "usb-whitelist-guard-core",
 ]
 

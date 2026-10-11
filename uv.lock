@@ -25,6 +25,15 @@ wheels = [
 ]
 
 [[package]]
+name = "darkdetect"
+version = "0.8.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/45/77/7575be73bf12dee231d0c6e60ce7fb7a7be4fcd58823374fc59a6e48262e/darkdetect-0.8.0.tar.gz", hash = "sha256:b5428e1170263eb5dea44c25dc3895edd75e6f52300986353cd63533fe7df8b1", size = 7681, upload-time = "2022-12-16T14:14:42.113Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f2/f2/728f041460f1b9739b85ee23b45fa5a505962ea11fd85bdbe2a02b021373/darkdetect-0.8.0-py3-none-any.whl", hash = "sha256:a7509ccf517eaad92b31c214f593dbcf138ea8a43b2935406bbd565e15527a85", size = 8955, upload-time = "2022-12-16T14:14:40.92Z" },
+]
+
+[[package]]
 name = "mako"
 version = "1.4.3"
 source = { registry = "https://pypi.org/simple" }
@@ -131,6 +140,15 @@ wheels = [
 ]
 
 [[package]]
+name = "sv-ttk"
+version = "2.6.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/4e/ca/9625914e7a7e58ce9f0d8d6a5eb29975bab077ce58a36cf86f863d188cd3/sv_ttk-2.6.1.tar.gz", hash = "sha256:47589d5e20398cf404e8362f24f3ed48f3830cd0ace056d83354fa25d8e4fe48", size = 49640, upload-time = "2025-06-08T16:14:21.333Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5b/36/32629d8bab9bccd54a36716a960ba1148fca4c1fd453370dba0b42d712ea/sv_ttk-2.6.1-py3-none-any.whl", hash = "sha256:8ca5944f95431a911986b00c54e7f44608f3f811382cd985fd14bb3e65f95d97", size = 50076, upload-time = "2025-06-08T16:14:20.402Z" },
+]
+
+[[package]]
 name = "typing-extensions"
 version = "4.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -164,11 +182,17 @@ name = "usb-whitelist-guard-gui"
 version = "0.1.0"
 source = { editable = "apps/gui" }
 dependencies = [
+    { name = "darkdetect" },
+    { name = "sv-ttk" },
     { name = "usb-whitelist-guard-core" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "usb-whitelist-guard-core", editable = "packages/core" }]
+requires-dist = [
+    { name = "darkdetect", specifier = ">=0.8" },
+    { name = "sv-ttk", specifier = ">=2.6" },
+    { name = "usb-whitelist-guard-core", editable = "packages/core" },
+]
 
 [[package]]
 name = "usb-whitelist-guard-monitor"

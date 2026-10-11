@@ -7,6 +7,7 @@ Works on Windows and Linux from one Python codebase.
 | Allowlist | Events |
 |---|---|
 | ![Allowlist tab](images/gui-allowlist.png) | ![Events tab](images/gui-events.png) |
+| ![Allowlist tab, dark theme](images/gui-allowlist-dark.png) | ![Events tab, dark theme](images/gui-events-dark.png) |
 
 ## How it works
 
@@ -127,7 +128,7 @@ Requires Python 3.15+ and [uv](https://docs.astral.sh/uv/).
 uv sync --all-packages
 ```
 
-Platform dependencies are installed automatically: `wmi` (and `pywin32`) on Windows, `pyudev` on Linux. The GUI uses Tkinter from the standard library. Some Linux distributions ship it as a separate package, e.g. `python3-tk`.
+Platform dependencies are installed automatically: `wmi` (and `pywin32`) on Windows, `pyudev` on Linux. The GUI uses Tkinter from the standard library with the [Sun Valley](https://github.com/rdbende/Sun-Valley-ttk-theme) theme (`sv-ttk`). Some Linux distributions ship Tkinter as a separate package, e.g. `python3-tk`.
 
 ## Usage
 
@@ -137,6 +138,8 @@ Both apps need **administrator / root** privileges. The monitor writes to the de
 uv run usb-whitelist-guard-monitor
 uv run usb-whitelist-guard-gui
 ```
+
+The GUI follows the system light/dark setting. Pass `--theme light` or `--theme dark` to override it. Under `sudo` the system setting is root's, not yours.
 
 ## Requirements
 

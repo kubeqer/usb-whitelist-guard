@@ -3,6 +3,8 @@ from tkinter import ttk
 
 from usb_whitelist_guard_core.domain import DeviceId
 
+from usb_whitelist_guard_gui.theme import error_color, style_window
+
 type EntryInput = tuple[DeviceId, str | None]
 
 
@@ -35,7 +37,7 @@ class EntryDialog(tk.Toplevel):
             if row == 0:
                 entry.focus_set()
 
-        ttk.Label(form, textvariable=self._error, foreground="#c0392b").grid(
+        ttk.Label(form, textvariable=self._error, foreground=error_color(self)).grid(
             row=len(fields), column=0, columnspan=2, sticky="w", pady=(6, 0)
         )
         buttons = ttk.Frame(form)
@@ -49,6 +51,7 @@ class EntryDialog(tk.Toplevel):
 
         self.bind("<Return>", lambda _event: self._submit())
         self.bind("<Escape>", lambda _event: self.destroy())
+        style_window(self)
         self.grab_set()
 
     def _submit(self) -> None:

@@ -1,5 +1,4 @@
 import tkinter as tk
-from pathlib import Path
 from tkinter import ttk
 
 from usb_whitelist_guard_core.domain import DeviceId
@@ -10,7 +9,7 @@ from usb_whitelist_guard_gui.events_tab import EventsTab
 
 
 class MainWindow(ttk.Frame):
-    def __init__(self, root: tk.Tk, service: AllowlistService, database: Path) -> None:
+    def __init__(self, root: tk.Tk, service: AllowlistService) -> None:
         super().__init__(root)
         root.title("USB Whitelist Guard")
         root.geometry("820x480")
@@ -30,7 +29,6 @@ class MainWindow(ttk.Frame):
         status_bar = ttk.Frame(self, padding=(8, 4))
         status_bar.pack(fill="x")
         ttk.Label(status_bar, textvariable=self._status).pack(side="left")
-        ttk.Label(status_bar, text=str(database), foreground="gray").pack(side="right")
 
         self._allowlist.refresh()
         self._events.refresh()

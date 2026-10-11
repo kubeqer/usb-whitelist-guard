@@ -5,12 +5,13 @@ from usb_whitelist_guard_core.domain import Decision, DeviceEvent, DeviceId, Gua
 from usb_whitelist_guard_core.services import AllowlistService
 
 from usb_whitelist_guard_gui.formatting import format_time
+from usb_whitelist_guard_gui.theme import error_color
 
 _COLUMNS = {
     "time": ("Time", 150),
-    "device": ("Device", 230),
+    "device": ("Device", 300),
     "decision": ("Decision", 80),
-    "reason": ("Reason", 300),
+    "reason": ("Reason", 230),
 }
 _REFRESH_MS = 2000
 _LIMIT = 500
@@ -34,7 +35,7 @@ class EventsTab(ttk.Frame):
         toolbar = ttk.Frame(self)
         toolbar.pack(fill="x", pady=(0, 6))
         ttk.Button(
-            toolbar, text="Allow selected device…", command=self._allow_selected
+            toolbar, text="Allow selected device...", command=self._allow_selected
         ).pack(side="left")
         ttk.Button(toolbar, text="Refresh", command=self.refresh).pack(side="right")
 
@@ -44,7 +45,7 @@ class EventsTab(ttk.Frame):
         for column, (heading, width) in _COLUMNS.items():
             self._tree.heading(column, text=heading)
             self._tree.column(column, width=width, anchor="w")
-        self._tree.tag_configure(Decision.BLOCK, foreground="#c0392b")
+        self._tree.tag_configure(Decision.BLOCK, foreground=error_color(self))
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=self._tree.yview)
         self._tree.configure(yscrollcommand=scrollbar.set)
         self._tree.pack(side="left", fill="both", expand=True)

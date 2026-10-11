@@ -30,7 +30,7 @@ class AllowlistTab(ttk.Frame):
 
         toolbar = ttk.Frame(self)
         toolbar.pack(fill="x", pady=(0, 6))
-        ttk.Button(toolbar, text="Add…", command=self.add).pack(side="left")
+        ttk.Button(toolbar, text="Add...", command=self.add).pack(side="left")
         ttk.Button(toolbar, text="Remove", command=self._remove_selected).pack(
             side="left", padx=6
         )
