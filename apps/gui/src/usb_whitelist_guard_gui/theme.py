@@ -69,7 +69,7 @@ def style_window(window: tk.Tk | tk.Toplevel) -> None:
             ctypes.byref(dark),
             ctypes.sizeof(dark),
         )
-    except (AttributeError, OSError):
+    except AttributeError, OSError:
         logger.debug("Cannot style the window title bar", exc_info=True)
 
 
@@ -113,4 +113,4 @@ def _pick_family(root: tk.Tk, preferred: tuple[str, ...]) -> str:
 
 
 def _root_of(window: tk.Misc) -> tk.Tk:
-    return window._root()  # noqa: SLF001
+    return window._root()

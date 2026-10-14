@@ -15,7 +15,7 @@ def prepare_process() -> None:
         return
     try:
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_ID)
-    except (AttributeError, OSError):
+    except AttributeError, OSError:
         logger.debug("Cannot set the AppUserModelID", exc_info=True)
 
 
@@ -30,4 +30,4 @@ def set_app_icon(root: tk.Tk) -> None:
         logger.warning("Cannot load the application icon", exc_info=True)
         return
     root.iconphoto(True, *images)
-    root._app_icons = images  # noqa: SLF001
+    root._app_icons = images

@@ -13,9 +13,7 @@ class UdevDeviceWatcher:
         self._context = context or pyudev.Context()
 
     def connected(self) -> Iterator[UsbDevice]:
-        udev_devices = self._context.list_devices(
-            subsystem="usb", DEVTYPE="usb_device"
-        )
+        udev_devices = self._context.list_devices(subsystem="usb", DEVTYPE="usb_device")
         for udev_device in udev_devices:
             device = to_usb_device(udev_device)
             if device is not None:
