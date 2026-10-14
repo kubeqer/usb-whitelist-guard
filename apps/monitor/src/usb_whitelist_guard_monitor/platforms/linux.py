@@ -12,6 +12,15 @@ class UdevDeviceWatcher:
     def __init__(self, context: pyudev.Context | None = None) -> None:
         self._context = context or pyudev.Context()
 
+    def connected(self) -> Iterator[UsbDevice]:
+        udev_devices = self._context.list_devices(
+            subsystem="usb", DEVTYPE="usb_device"
+        )
+        for udev_device in udev_devices:
+            device = to_usb_device(udev_device)
+            if device is not None:
+                yield device
+
     def watch(self) -> Iterator[UsbDevice]:
         monitor = pyudev.Monitor.from_netlink(self._context)
         monitor.filter_by(subsystem="usb", device_type="usb_device")

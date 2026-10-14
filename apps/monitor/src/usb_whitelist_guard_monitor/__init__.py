@@ -4,7 +4,17 @@ from pathlib import Path
 
 from usb_whitelist_guard_core.config import database_url, default_database_path
 from usb_whitelist_guard_core.policy import AllowlistPolicy, FailSecurePolicy
-from usb_whitelist_guard_core.services import GuardService
+from usb_whitelist_guard_core.ports import (
+    AllowlistReader,
+    AllowlistWriter,
+    DeviceWatcher,
+    EventReader,
+)
+from usb_whitelist_guard_core.services import (
+    GuardService,
+    allow_connected_devices,
+    is_first_run,
+)
 from usb_whitelist_guard_core.storage import (
     SqlAllowlistRepository,
     SqlEventRepository,
@@ -40,9 +50,13 @@ def main(argv: list[str] | None = None) -> int:
         )
     sessions = make_session_factory(engine)
 
+    allowlist = SqlAllowlistRepository(sessions)
+    events = SqlEventRepository(sessions)
     watcher, blocker = create_platform_adapters()
-    policy = FailSecurePolicy(AllowlistPolicy(SqlAllowlistRepository(sessions)))
-    service = GuardService(watcher, policy, blocker, SqlEventRepository(sessions))
+    _allow_connected_on_first_run(watcher, allowlist, allowlist, events)
+
+    policy = FailSecurePolicy(AllowlistPolicy(allowlist))
+    service = GuardService(watcher, policy, blocker, events)
 
     logger.info("Watching for USB devices (database: %s)", args.database)
     try:
@@ -50,6 +64,23 @@ def main(argv: list[str] | None = None) -> int:
     except KeyboardInterrupt:
         logger.info("Stopped")
     return 0
+
+
+def _allow_connected_on_first_run(
+    watcher: DeviceWatcher,
+    reader: AllowlistReader,
+    writer: AllowlistWriter,
+    events: EventReader,
+) -> None:
+    try:
+        if not is_first_run(reader, events):
+            return
+        logger.info("First run: allowing every USB device connected now")
+        added = allow_connected_devices(watcher.connected(), writer)
+    except Exception:
+        logger.exception("Could not allow connected devices on first run")
+        return
+    logger.info("First run: %d device(s) added to the allowlist", len(added))
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:

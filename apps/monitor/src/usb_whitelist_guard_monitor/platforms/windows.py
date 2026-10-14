@@ -11,6 +11,10 @@ _CREATION_QUERY = (
     "WHERE TargetInstance ISA 'Win32_PnPEntity' "
     r"AND TargetInstance.PNPDeviceID LIKE 'USB\\VID[_]%'"
 )
+_CONNECTED_QUERY = (
+    "SELECT PNPDeviceID, Name FROM Win32_PnPEntity "
+    r"WHERE PNPDeviceID LIKE 'USB\VID[_]%'"
+)
 _INSTANCE_ID = re.compile(
     r"^USB\\VID_([0-9A-F]{4})&PID_([0-9A-F]{4})\\(.+)$", re.IGNORECASE
 )
@@ -20,6 +24,17 @@ _POWERSHELL_TIMEOUT_S = 60
 
 
 class WmiDeviceWatcher:
+    def connected(self) -> Iterator[UsbDevice]:
+        pythoncom.CoInitialize()
+        try:
+            devices = [
+                to_usb_device(entity.PNPDeviceID, entity.Name)
+                for entity in wmi.WMI().query(_CONNECTED_QUERY)
+            ]
+        finally:
+            pythoncom.CoUninitialize()
+        yield from (device for device in devices if device is not None)
+
     def watch(self) -> Iterator[UsbDevice]:
         pythoncom.CoInitialize()
         try:

@@ -90,6 +90,10 @@ Every entry has a VID and PID (4 hex digits) and an optional serial number:
 - **with a serial**, the entry only allows that one physical device;
 - **without a serial** ("any"), it allows every device with that VID:PID.
 
+### First run
+
+When the monitor starts with an empty database (no allowlist entries and no events), it adds every USB device connected at that moment to the allowlist, so your keyboard, mouse and other devices you already use stay allowed. Each entry keeps the device's serial if it has one, and its note says "connected at first run". Once the database has any data, the monitor never does this again. If the database can't be read at startup, nothing is added.
+
 ### Fail-secure
 
 Every device is blocked when its state can't be checked:
@@ -115,10 +119,10 @@ The core is split into layers:
 | `domain` | `DeviceId`, `UsbDevice`, `AllowlistEntry`, `DeviceEvent`, `Decision` / `Verdict`, errors |
 | `ports` | protocols: `DeviceWatcher`, `DeviceBlocker`, `AllowlistReader` / `Writer`, `EventSink` / `Reader` |
 | `policy` | `AllowlistPolicy`, `FailSecurePolicy` |
-| `services` | `GuardService` (used by the monitor), `AllowlistService` (used by the GUI) |
+| `services` | `GuardService` and first-run seeding (used by the monitor), `AllowlistService` (used by the GUI) |
 | `storage` | SQLAlchemy models, repositories, Alembic migrations |
 
-Platform code depends only on the `ports`, so you can add a new OS by implementing `DeviceWatcher` and `DeviceBlocker` in `apps/monitor/.../platforms/`.
+Platform code depends only on the `ports`, so you can add a new OS by implementing `DeviceWatcher` (`connected()` and `watch()`) and `DeviceBlocker` in `apps/monitor/.../platforms/`.
 
 ## Installation
 
