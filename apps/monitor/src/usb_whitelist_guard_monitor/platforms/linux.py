@@ -15,6 +15,8 @@ class UdevDeviceWatcher:
     def connected(self) -> Iterator[UsbDevice]:
         udev_devices = self._context.list_devices(subsystem="usb", DEVTYPE="usb_device")
         for udev_device in udev_devices:
+            if udev_device.sys_name.startswith("usb"):
+                continue
             device = to_usb_device(udev_device)
             if device is not None:
                 yield device

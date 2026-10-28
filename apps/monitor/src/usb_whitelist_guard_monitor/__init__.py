@@ -1,8 +1,12 @@
 import argparse
 import logging
+import threading
+import time
+from collections.abc import Sequence
 from pathlib import Path
 
 from usb_whitelist_guard_core.config import database_url, default_database_path
+from usb_whitelist_guard_core.domain import AllowlistEntry
 from usb_whitelist_guard_core.policy import AllowlistPolicy, FailSecurePolicy
 from usb_whitelist_guard_core.ports import (
     AllowlistReader,
@@ -27,6 +31,9 @@ from usb_whitelist_guard_monitor.platforms import create_platform_adapters
 from usb_whitelist_guard_monitor.privileges import is_privileged
 
 logger = logging.getLogger(__name__)
+
+_ALLOWLIST_POLL_S = 2.0
+_FAILURE_RETRY_S = 10.0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -58,6 +65,13 @@ def main(argv: list[str] | None = None) -> int:
     policy = FailSecurePolicy(AllowlistPolicy(allowlist))
     service = GuardService(watcher, policy, blocker, events)
 
+    threading.Thread(
+        target=_reconcile_on_allowlist_change,
+        args=(service, allowlist),
+        name="allowlist-reconciler",
+        daemon=True,
+    ).start()
+
     logger.info("Watching for USB devices (database: %s)", args.database)
     try:
         service.run()
@@ -81,6 +95,34 @@ def _allow_connected_on_first_run(
         logger.exception("Could not allow connected devices on first run")
         return
     logger.info("First run: %d device(s) added to the allowlist", len(added))
+
+
+def _reconcile_on_allowlist_change(
+    service: GuardService, allowlist: AllowlistReader
+) -> None:
+    # Connected devices are re-checked only after the allowlist was read
+    # successfully, so a broken database never blocks the keyboard in use.
+    last: Sequence[AllowlistEntry] | None = None
+    unavailable = False
+    next_retry = 0.0
+    while True:
+        try:
+            current = allowlist.list_all()
+        except Exception:
+            if not unavailable:
+                logger.exception("Allowlist unavailable; connected devices not checked")
+            unavailable = True
+        else:
+            unavailable = False
+            retry_due = service.has_failures() and time.monotonic() >= next_retry
+            if current != last or retry_due:
+                try:
+                    service.reconcile()
+                    last = current
+                    next_retry = time.monotonic() + _FAILURE_RETRY_S
+                except Exception:
+                    logger.exception("Could not check connected devices")
+        time.sleep(_ALLOWLIST_POLL_S)
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:

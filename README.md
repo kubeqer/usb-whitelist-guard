@@ -94,6 +94,10 @@ Every entry has a VID and PID (4 hex digits) and an optional serial number:
 
 When the monitor starts with an empty database (no allowlist entries and no events), it adds every USB device connected at that moment to the allowlist, so your keyboard, mouse and other devices you already use stay allowed. Each entry keeps the device's serial if it has one, and its note says "connected at first run". Once the database has any data, the monitor never does this again. If the database can't be read at startup, nothing is added.
 
+### Connected devices
+
+At startup the monitor also checks every USB device that is already connected, so a device plugged in while the monitor wasn't running is blocked too. After that it re-reads the allowlist every 2 seconds and, when it changes, re-checks the connected devices: removing an entry blocks a matching device that is plugged in, and adding one unblocks it without replugging. Only devices whose decision changed are blocked or unblocked. These checks are skipped while the allowlist can't be read, so a database failure never cuts off the keyboard and mouse in use. On Linux, root hubs are never checked.
+
 ### Fail-secure
 
 Every device is blocked when its state can't be checked:

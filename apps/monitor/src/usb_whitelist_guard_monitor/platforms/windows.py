@@ -91,7 +91,10 @@ def _run_powershell(script: str) -> None:
         "-NoProfile",
         "-NonInteractive",
         "-Command",
-        f"$ErrorActionPreference = 'Stop'; {script}",
+        (
+            f"$ErrorActionPreference = 'Stop'; try {{ {script} }} "
+            "catch { [Console]::Error.WriteLine($_.Exception.Message); exit 1 }"
+        ),
     ]
     try:
         result = subprocess.run(
